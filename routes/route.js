@@ -33,7 +33,7 @@ const myschimatype = require('../schematypes/globalschematype');
         // console.log(alldatalist);
         res.send(alldatalist);
     })
-
+    
 
 
 
