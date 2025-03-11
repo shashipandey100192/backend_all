@@ -32,7 +32,24 @@ const myschimatype = require('../schematypes/globalschematype');
         const alldatalist = await myschimatype.find();
         // console.log(alldatalist);
         res.send(alldatalist);
-    })
+    });
+
+myapp.post("/registor", async(req,res)=>{
+    const {name,phone,email,pass} = req.body;
+    const adduser = new myschimatype({
+        name,phone,email,pass
+    });
+    await adduser.save();
+});
+
+myapp.delete("/removeuser", async(req,res)=>{
+    const {name} = req.body
+    const deletedata = await myschimatype.deleteMany({name:name});
+    console.log(deletedata);
+})
+
+
+
     
 
 

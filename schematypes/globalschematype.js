@@ -1,10 +1,21 @@
 const mongoose = require('mongoose');
 
 const Basictype = new mongoose.Schema({
-    name:{},
-    phone:{},
-    email:{},
-    pass:{}
+    name:{
+        type:String,
+        require:true,
+        minLength:[4,"ooooo"]
+
+    },
+    phone:{
+        type:String
+    },
+    email:{
+        type:String
+    },
+    pass:{
+        type:String
+    }
 });
 
 
