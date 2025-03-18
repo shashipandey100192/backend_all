@@ -35,18 +35,22 @@ const myschimatype = require('../schematypes/globalschematype');
     });
 
 myapp.post("/registor", async(req,res)=>{
-    const {name,phone,email,pass} = req.body;
+    const {fullname,email,pass,dob,purl,gender} = req.body;
     const adduser = new myschimatype({
-        name,phone,email,pass
+        fullname,email,pass,dob,purl,gender
     });
     await adduser.save();
 });
 
-myapp.delete("/removeuser", async(req,res)=>{
-    const {name} = req.body
-    const deletedata = await myschimatype.deleteMany({name:name});
+myapp.delete("/removeuser/:id", async(req,res)=>{
+    // const {name} = req.body
+    // const deletedata = await myschimatype.deleteMany({name:name});
+    const {id} = req.params;
+    const deletedata = await myschimatype.deleteOne({_id:id})
     console.log(deletedata);
-})
+});
+
+
 
 
 
