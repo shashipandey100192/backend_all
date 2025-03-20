@@ -39,7 +39,7 @@ myapp.post("/registor", async(req,res)=>{
         fullname,email,pass,dob,purl,gender
     });
     await adduser.save();
-    res.status(200).json(adduser);
+    res.status(200).json({message:"data successfully registor",statuscode:584});
 
 });
 
@@ -50,6 +50,19 @@ myapp.delete("/removeuser/:id", async(req,res)=>{
     res.status(256).json(deletedata);
 });
 
+
+myapp.patch("/edituser/:id", async(req,res)=>{
+    const {id} = req.params;
+    const change = await myschimatype.findByIdAndUpdate({_id:id},{new:true})
+    res.status(258).json({mydata:change,msg:"successfully update",status:547});
+});
+
+
+myapp.get("/singlereocrd/:id", async(req,res)=>{
+        const {id} = req.params;
+    const sinle = await myschimatype.findById({_id:id});
+    res.send(sinle);
+});
 
 
 
