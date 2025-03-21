@@ -53,7 +53,7 @@ myapp.delete("/removeuser/:id", async(req,res)=>{
 
 myapp.patch("/edituser/:id", async(req,res)=>{
     const {id} = req.params;
-    const change = await myschimatype.findByIdAndUpdate({_id:id},{new:true})
+    const change = await myschimatype.findByIdAndUpdate(id, req.body, { new: true })
     res.status(258).json({mydata:change,msg:"successfully update",status:547});
 });
 
@@ -61,7 +61,8 @@ myapp.patch("/edituser/:id", async(req,res)=>{
 myapp.get("/singlereocrd/:id", async(req,res)=>{
         const {id} = req.params;
     const sinle = await myschimatype.findById({_id:id});
-    res.send(sinle);
+    res.status(278).json(sinle);
+
 });
 
 
