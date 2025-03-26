@@ -65,6 +65,48 @@ myapp.get("/singlereocrd/:id", async(req,res)=>{
 
 });
 
+myapp.post("/loginpage", async(req,res)=>{
+   const {email,pass} = req.body;
+   const logindata = await myschimatype.findOne({email:email});
+
+   if(!logindata)
+    {
+        res.json({msg:"email not found",status:460});
+    }
+    else
+    {
+        if(logindata.email===email && logindata.pass===pass)
+        {
+            res.json({msg:"successfully login",status:240});
+        }
+        else
+        {
+            res.json({msg:"email and password not match",status:466});
+        }
+
+    }
+
+
+    // if(logindata.email==="" || logindata.pass==="")
+    // {
+    //     res.json({logindata:logindata,msg:"email id and password required",status:450});
+    // }
+    // else
+    // {
+            
+    //         if(logindata.pass!==pass)
+    //             {
+    //                 res.json({msg:"increact pass",status:461});
+    //             }
+    //         if(logindata.email===email && logindata.pass===pass){
+    //             res.json({msg:"successfully login",status:240});
+    //         }
+
+    // }
+
+
+})
+
 
 
 
