@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
+const db = process.env.DATABASE;
 
-    mongoose.connect('mongodb+srv://mernuser:supperpassword@cluster0.cqczybv.mongodb.net/mydatabase').then((res)=>{
+    mongoose.connect(db).then((res)=>{
         console.log("database connected");
     });
