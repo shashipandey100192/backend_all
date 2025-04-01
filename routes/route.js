@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const myschimatype = require('../schematypes/globalschematype');
 
 
@@ -35,13 +36,15 @@ const myschimatype = require('../schematypes/globalschematype');
 
 myapp.post("/registor", async(req,res)=>{
     const {fullname,email,pass,dob,purl,gender} = req.body;
+    const hashedPassword = await bcrypt.hash(pass, 10);
     const adduser = new myschimatype({
-        fullname,email,pass,dob,purl,gender
+        fullname,email,pass:hashedPassword,dob,purl,gender
     });
     await adduser.save();
     res.status(200).json({message:"data successfully registor",statuscode:584});
 
 });
+
 
 myapp.delete("/removeuser/:id", async(req,res)=>{
     const {id} = req.params;
@@ -68,14 +71,15 @@ myapp.get("/singlereocrd/:id", async(req,res)=>{
 myapp.post("/loginpage", async(req,res)=>{
    const {email,pass} = req.body;
    const logindata = await myschimatype.findOne({email:email});
-
+    
    if(!logindata)
     {
         res.json({msg:"email not found",status:460});
     }
     else
     {
-        if(logindata.email===email && logindata.pass===pass)
+        const isMatch = await bcrypt.compare(pass, logindata.pass);
+        if(logindata.email===email && isMatch===true)
         {
             res.json({msg:"successfully login",status:240});
         }
