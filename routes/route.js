@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const myschimatype = require('../schematypes/globalschematype');
+const jwt = require("jsonwebtoken");
 
 
    const myapp = express.Router();
@@ -28,6 +29,25 @@ const myschimatype = require('../schematypes/globalschematype');
     //     // res.download("abc.html");
     //     res.redirect("/xyz");
     // });
+
+    const verifyToken = (req, res, next) => {
+        const token = req.headers["authorization"];
+    
+        if (!token) {
+            return res.status(403).json({ message: "Token is required" });
+        }
+    
+        jwt.verify(token, SECRET_KEY, (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ message: "Invalid token" });
+            }
+            req.user = decoded;
+            next();
+        });
+    };
+
+    
+
 
     myapp.get("/alldata", async(req,res)=>{
         const alldatalist = await myschimatype.find();
@@ -68,48 +88,77 @@ myapp.get("/singlereocrd/:id", async(req,res)=>{
 
 });
 
-myapp.post("/loginpage", async(req,res)=>{
-   const {email,pass} = req.body;
-   const logindata = await myschimatype.findOne({email:email});
+// myapp.post("/loginpage", async(req,res)=>{
+//    const {email,pass} = req.body;
+//    const logindata = await myschimatype.findOne({email:email});
     
-   if(!logindata)
-    {
-        res.json({msg:"email not found",status:460});
-    }
-    else
-    {
-        const isMatch = await bcrypt.compare(pass, logindata.pass);
-        if(logindata.email===email && isMatch===true)
-        {
-            res.json({msg:"successfully login",status:240});
-        }
-        else
-        {
-            res.json({msg:"email and password not match",status:466});
-        }
+//    if(!logindata)
+//     {
+//         res.json({msg:"email not found",status:460});
+//     }
+//     else
+//     {
+//         const isMatch = await bcrypt.compare(pass, logindata.pass);
+//         if(logindata.email===email && isMatch===true)
+//         {
+//             res.json({msg:"successfully login",status:240});
+//         }
+//         else
+//         {
+//             res.json({msg:"email and password not match",status:466});
+//         }
 
-    }
+//     }
 
 
-    // if(logindata.email==="" || logindata.pass==="")
-    // {
-    //     res.json({logindata:logindata,msg:"email id and password required",status:450});
-    // }
-    // else
-    // {
+//     // if(logindata.email==="" || logindata.pass==="")
+//     // {
+//     //     res.json({logindata:logindata,msg:"email id and password required",status:450});
+//     // }
+//     // else
+//     // {
             
-    //         if(logindata.pass!==pass)
-    //             {
-    //                 res.json({msg:"increact pass",status:461});
-    //             }
-    //         if(logindata.email===email && logindata.pass===pass){
-    //             res.json({msg:"successfully login",status:240});
-    //         }
+//     //         if(logindata.pass!==pass)
+//     //             {
+//     //                 res.json({msg:"increact pass",status:461});
+//     //             }
+//     //         if(logindata.email===email && logindata.pass===pass){
+//     //             res.json({msg:"successfully login",status:240});
+//     //         }
 
-    // }
+//     // }
 
 
-})
+// })
+
+const SECRET_KEY = "dgdgdsdjkfsdhfshdfjkiofdhfgnfgh";
+myapp.post("/loginpage", async (req, res) => {
+    try {
+        const { email, pass } = req.body;
+        const logindata = await myschimatype.findOne({ email: email });
+
+        if (!logindata) {
+            return res.json({ msg: "Email not found", status: 460 });
+        }
+
+        const isMatch = await bcrypt.compare(pass, logindata.pass);
+        if (isMatch) {
+            // Generate JWT token
+            const token = jwt.sign(
+                { id: logindata._id, email: logindata.email }, 
+                SECRET_KEY, 
+                { expiresIn: "5m" }
+            );
+
+            return res.json({ msg: "Successfully logged in", status: 240, token });
+        } else {
+            return res.json({ msg: "Email and password do not match", status: 466 });
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({ msg: "Server error", status: 500 });
+    }
+});
 
 
 
